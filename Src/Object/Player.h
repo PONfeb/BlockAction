@@ -34,6 +34,17 @@ public:
 		MAX,
 	};
 
+	// 状態
+	enum class STATE
+	{
+		NONE,
+		STANDBY,
+		KNOCKBACK,
+		ATTACK,
+		DEAD,
+		END,
+		VICTORY,
+	};
 
 	// モデルの大きさ
 	static constexpr VECTOR SCALES = { 0.5f, 0.5f, 0.5f };
@@ -63,6 +74,12 @@ public:
 	static constexpr VECTOR RESPAWN_POS =
 	{ BlockManager::SIZE_BLOCK * 10, 800.0f, BlockManager::SIZE_BLOCK * 10 };
 
+	// 衝突判定用の球体の半径
+	static constexpr float COLLISION_RADIUS = 50.0f;
+
+	// ノックバックスピード
+	static constexpr float SPEED_KNOCKBACK = 10.0f;
+
 	// コンストラクタ
 	Player(void);
 	// デストラクタ
@@ -82,6 +99,9 @@ public:
 	// 衝突判定（押し戻し）
 	void CollisionStage(VECTOR pos);
 
+	// 指定方向にノックバックさせる
+	void KnockBack(VECTOR dirXZ, float jumpPow);
+
 private:
 	
 	// モデルのハンドルID
@@ -98,6 +118,11 @@ private:
 
 	// アニメーション制御
 	AnimationController* animationController_;
+
+	// ノックバック方向
+	VECTOR knockBackDir_;
+	// ノックバックカウンタ(点滅用)
+	int cntKnockBack_;
 
 	// 行動制御
 	void ProcessMove(void);

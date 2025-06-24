@@ -55,5 +55,8 @@ private:
 	void Collision(void);
 
 	// ステージブロックとプレイヤーの衝突
-	void CollisionStage(void);
+	void CollisionStage(void);	
+	
+	// 敵とプレイヤーの衝突
+	void CollisionEnemy(void);
 };

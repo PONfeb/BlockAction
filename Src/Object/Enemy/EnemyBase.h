@@ -61,6 +61,13 @@ public:
 	// 状態遷移
 	void ChangeState(STATE state);
 
+	VECTOR GetPos_(void);
+
+	// 衝突判定用半径
+	float GetCollisionRadius_(void);
+
+	std::vector<ShotBase*> GetShots(void);
+
 protected:
 
 	// モデルのハンドルID
@@ -71,9 +78,12 @@ protected:
 
 	// 弾
 	std::vector<ShotBase*> shots_;
+
 	// エフェクト用モデルハンドルID
 	int baseAttackEffectModelId_;
 
+	// 衝突判定用半径
+	float collisionRadius_;
 
 	Player* player_; // プレイヤーへのポインタ
 
@@ -110,15 +120,17 @@ protected:
 	// 出現座標の設定
 	void SetSpawnPosition(void);
 
-	// パラメーター設定
-	virtual void SetParam(void);
+	// パラメーター設定（純粋仮想関数）
+	virtual void SetParam(void) = 0;
 
 	// 状態遷移
 	virtual void ChangeStandby(void);
 	virtual void ChangeAttack(void);
+
 	// 状態別更新
 	virtual void UpdateStandby(void);
 	virtual void UpdateAttack(void);
+
 	// 状態別描画
 	virtual void DrawStandby(void);
 	virtual void DrawAttack(void);

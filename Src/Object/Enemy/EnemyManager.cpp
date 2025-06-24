@@ -1,5 +1,7 @@
 
+#include "EnemyManager.h"
 #include "../../Application.h"
+#include "../../Object/Shot/ShotBase.h"
 #include "EnemyManager.h"
 #include "EnemyDemon.h"
 #include "EnemyWizard.h"
@@ -26,6 +28,9 @@ void EnemyManager::Init(void)
 	enemyModelIds_.emplace_back(
 		MV1LoadModel((Application::PATH_MODEL + "Enemy/Giant.mv1").c_str()));
 
+	// 攻撃エフェクト用のモデルのロード
+	attackEffectModelIds_.emplace_back(MV1LoadModel((Application::PATH_MODEL + "Effect/Fireball/Fireball.mv1").c_str()));
+	attackEffectModelIds_.emplace_back(MV1LoadModel((Application::PATH_MODEL + "Effect/Rockfall/Rock.mv1").c_str()));
 }
 
 void EnemyManager::Update(void)
@@ -41,7 +46,7 @@ void EnemyManager::Update(void)
 		enemy->Init(
 			EnemyBase::TYPE::DEMON,
 			enemyModelIds_[static_cast<int>(EnemyBase::TYPE::DEMON)],
-			player_);
+			-1, player_);
 
 
 		enemys_.push_back(enemy);
@@ -54,6 +59,7 @@ void EnemyManager::Update(void)
 		enemy->Init(
 			EnemyBase::TYPE::WIZARD,
 			enemyModelIds_[static_cast<int>(EnemyBase::TYPE::WIZARD)],
+			attackEffectModelIds_[static_cast<int>(ShotBase::TYPE::STRAIGHT)],
 			player_);
 
 
@@ -88,4 +94,9 @@ void EnemyManager::Release(void)
 		MV1DeleteModel(id);
 	}
 
+}
+
+std::vector<EnemyBase*> EnemyManager::GetEnemys(void)
+{
+	return enemys_;
 }

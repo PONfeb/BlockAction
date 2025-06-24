@@ -2,6 +2,9 @@
 #include "GameScene.h"
 #include "../Object/Grid.h"
 #include "../Object/Player.h"
+#include "../Utility/AsoUtility.h"
+#include "../Object/Enemy/EnemyBase.h"
+#include "../Object/Shot/ShotBase.h"
 #include "../Object/Enemy/EnemyManager.h"
 #include "../Object/Stage/BlockManager.h"
 #include <DxLib.h>
@@ -103,6 +106,8 @@ void GameScene::Collision(void)
 	// ステージブロックとプレイヤーの衝突
 	CollisionStage();
 
+	// 敵とプレイヤーの衝突
+	CollisionEnemy();
 }
 
 void GameScene::CollisionStage(void)
@@ -128,4 +133,45 @@ void GameScene::CollisionStage(void)
 		player_->CollisionStage(result.HitPosition);
 	}
 
+}
+
+void GameScene::CollisionEnemy(void)
+{
+	// プレイヤーの座標を取得
+	VECTOR playerPos = player_->GetPos();
+
+	// 敵の情報を取得する
+	std::vector<EnemyBase*> enemys = enemyManager_->GetEnemys();
+
+	for (EnemyBase* enemy : enemys)
+	{	
+
+		// 敵の座標を取得
+		VECTOR enemyPos = enemy->GetPos_();
+
+		// 敵の衝突判定用半径
+		float enemyRadius = enemy->GetCollisionRadius_();
+
+		if (AsoUtility::IsHitSpheres(playerPos, Player::COLLISION_RADIUS, enemyPos, enemyRadius))
+		{
+			int a = 0;
+		}
+
+		std::vector<ShotBase*> shots = enemy->GetShots();
+
+		for (ShotBase* shot : shots)
+		{
+
+			// 球の座標を取得
+			VECTOR shotPos = shot->GetPos();
+
+			// 球の半径を取得
+			float shotRadius = shot->GetCollisionRadius();
+
+			if (AsoUtility::IsHitSpheres(playerPos, Player::COLLISION_RADIUS, shotPos, shotRadius))
+			{
+				int b = 0;
+			}
+		}
+	}
 }

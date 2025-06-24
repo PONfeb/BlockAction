@@ -19,12 +19,16 @@ void ShotBase::CreateShot(VECTOR pos, VECTOR dir)
 {
 	// 弾の発射位置を設定
 	pos_ = pos;
+
 	// 弾の発射方向の設定
 	dir_ = dir;
+
 	// パラメータ設定
 	SetParam();
+
 	// 大きさの設定
 	MV1SetScale(modelId_, scales_);
+
 	// 位置の設定
 	MV1SetPosition(modelId_, pos_);
 }

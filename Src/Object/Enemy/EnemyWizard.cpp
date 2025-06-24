@@ -15,6 +15,7 @@ void EnemyWizard::SetParam(void)
 	speed_ = 0.0f;
 	spawnRange_ = 0.8f;
 	cntAttack_ = 0;
+	collisionRadius_ = 40.0f;
 }
 
 void EnemyWizard::UpdateStandby(void)

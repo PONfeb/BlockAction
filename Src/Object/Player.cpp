@@ -71,6 +71,11 @@ void Player::Draw(void)
 {
 	// モデルの描画
 	MV1DrawModel(modelId_);
+
+#ifdef _DEBUG
+	DrawSphere3D(pos_, COLLISION_RADIUS, 10, 0x0000ff, 0x0000ff, false);
+#endif // _DEBUG
+
 }
 
 void Player::Release(void)
@@ -100,6 +105,16 @@ void Player::CollisionStage(VECTOR pos)
 	jumpPow_ = 0.0f;
 
 	isJump_ = false;
+}
+
+void Player::KnockBack(VECTOR dirXZ, float jumpPow)
+{
+	// 引数をメンバ変数に格納
+	knockBackDir_ = dirXZ;
+	jumpPow_ = jumpPow;
+
+	// ノックバックに状態遷移
+	ChangeState(STATE::KNOCKBACK);
 }
 
 

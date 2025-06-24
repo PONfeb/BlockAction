@@ -1,11 +1,11 @@
 
 #include "EnemyBase.h"
 #include "../../Application.h"
-#include "../../Object/Player.h"
-#include "../Shot/ShotStraight.h"
+#include "../../Utility/AsoUtility.h"
 #include "../Stage/BlockManager.h"
 #include "../Common/AnimationController.h"
-#include "../../Utility/AsoUtility.h"
+#include "../Player.h"
+#include "../Shot/ShotStraight.h"
 
 EnemyBase::EnemyBase(void)
 {
@@ -79,6 +79,9 @@ void EnemyBase::Update(void)
 		break;
 	}
 
+	// 弾の更新	
+	UpdateShot();
+
 	// アニメーションの更新
 	animationController_->Update();
 }
@@ -94,6 +97,13 @@ void EnemyBase::Draw(void)
 		DrawAttack();
 		break;
 	}
+
+	// 弾の描画
+	DrawShot();
+
+#ifdef _DEBUG
+	DrawSphere3D(pos_, collisionRadius_, 10, 0x0000ff, 0x0000ff, false);
+#endif // _DEBUG
 }
 
 void EnemyBase::Release(void)
@@ -104,11 +114,18 @@ void EnemyBase::Release(void)
 	// アニメーションコントローラの解放
 	animationController_->Release();
 	delete animationController_;
+
+	// 弾の解放
+	for (ShotBase* shot : shots_)
+	{
+		shot->Release();
+		delete shot;
+	}
+	shots_.clear();
 }
 
 void EnemyBase::ChangeState(STATE state)
 {
-
 	state_ = state;
 
 	switch (state_)
@@ -120,6 +137,21 @@ void EnemyBase::ChangeState(STATE state)
 		ChangeAttack();
 		break;
 	}
+}
+
+VECTOR EnemyBase::GetPos_(void)
+{
+	return pos_;
+}
+
+float EnemyBase::GetCollisionRadius_(void)
+{
+	return collisionRadius_;
+}
+
+std::vector<ShotBase*> EnemyBase::GetShots(void)
+{
+	return shots_;
 }
 
 void EnemyBase::LookPlayer(void)
@@ -262,6 +294,22 @@ void EnemyBase::DrawAttack(void)
 {
 	// モデルの描画
 	MV1DrawModel(modelId_);
+}
+
+void EnemyBase::UpdateShot(void)
+{	
+	for (ShotBase* shot : shots_)
+	{
+		shot->Update();
+	}
+}
+
+void EnemyBase::DrawShot(void)
+{
+	for (ShotBase* shot : shots_)
+	{
+		shot->Draw();
+	}
 }
 
 ShotBase* EnemyBase::GetValidShot(void)

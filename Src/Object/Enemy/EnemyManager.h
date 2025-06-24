@@ -27,13 +27,19 @@ public:
 	void Draw(void);
 	void Release(void);
 
-private:
+	// エネミーの取得
+	std::vector<EnemyBase*> GetEnemys(void);
 
-	// エネミー
-	std::vector<EnemyBase*> enemys_;
+private:
 
 	// エネミー用のモデルハンドルID
 	std::vector<int> enemyModelIds_;
+
+	// 攻撃エフェクト用のモデルハンドルID
+	std::vector<int> attackEffectModelIds_;
+
+	// エネミー
+	std::vector<EnemyBase*> enemys_;
 
 	// プレイヤーのポインタ
 	Player* player_;

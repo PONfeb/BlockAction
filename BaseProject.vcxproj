@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\UI\HpManager.cpp" />
     <ClCompile Include="Src\Object\Shot\ShotStraight.cpp" />
     <ClCompile Include="Src\Object\Shot\ShotBase.cpp" />
     <ClCompile Include="Src\Object\Enemy\EnemyWizard.cpp" />
@@ -44,6 +45,7 @@
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\UI\HpManager.h" />
     <ClInclude Include="Src\Object\Shot\ShotStraight.h" />
     <ClInclude Include="Src\Object\Shot\ShotBase.h" />
     <ClInclude Include="Src\Object\Enemy\EnemyWizard.h" />

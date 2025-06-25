@@ -38,6 +38,9 @@ void Player::Init(void)
 	// ジャンプ力の初期化
 	jumpPow_ = 0.0f;
 
+	// HPの初期化
+	hp_ = MAX_HP;
+
 	// モデルアニメーション制御の初期化
 	animationController_ = new AnimationController(modelId_);
 	for (int i = 0; i < static_cast<int>(ANIM_TYPE::MAX); i++)
@@ -48,23 +51,36 @@ void Player::Init(void)
 	// 初期アニメーション再生
 	animationController_->Play(static_cast<int>(ANIM_TYPE::IDLE));
 
+	// 初期状態
+	state_ = STATE::STANDBY;
+
 	// カメラにプレイヤーを返す
 	SceneManager::GetInstance().GetCamera()->SetFollow(this);
 }
 
 void Player::Update(void)
 {
-	// 移動操作
-	ProcessMove();
 
-	// ジャンプ
-	ProcessJump();
-
-	// 落下位置からリスポーン
-	Respawn();
-
-	// アニメーションの更新
-	animationController_->Update();
+	switch (state_)
+	{
+	case Player::STATE::NONE:
+		break;
+	case Player::STATE::STANDBY:
+		UpdateStandby();
+		break;
+	case Player::STATE::KNOCKBACK:
+		UpdateKnockBack();
+		break;
+	case Player::STATE::ATTACK:
+		UpdateAttack();
+		break;
+	case Player::STATE::DEAD:
+		break;
+	case Player::STATE::END:
+		break;
+	case Player::STATE::VICTORY:
+		break;
+	}
 }
 
 void Player::Draw(void)
@@ -72,8 +88,32 @@ void Player::Draw(void)
 	// モデルの描画
 	MV1DrawModel(modelId_);
 
+	switch (state_)
+	{
+	case Player::STATE::NONE:
+		break;
+	case Player::STATE::STANDBY:
+		DrawStandby();
+		break;
+	case Player::STATE::KNOCKBACK:
+		DrawKnockBack();
+		break;
+	case Player::STATE::ATTACK:
+		DrawAttack();
+		break;
+	case Player::STATE::DEAD:
+		DrawDead();
+		break;
+	case Player::STATE::END:
+		DrawEnd();
+		break;
+	case Player::STATE::VICTORY:
+		DrawVictory();
+		break;
+	}
+
 #ifdef _DEBUG
-	DrawSphere3D(pos_, COLLISION_RADIUS, 10, 0x0000ff, 0x0000ff, false);
+	//DrawSphere3D(pos_, COLLISION_RADIUS, 10, 0x0000ff, 0x0000ff, false);
 #endif // _DEBUG
 
 }
@@ -115,6 +155,20 @@ void Player::KnockBack(VECTOR dirXZ, float jumpPow)
 
 	// ノックバックに状態遷移
 	ChangeState(STATE::KNOCKBACK);
+}
+
+void Player::Damage(int damage)
+{
+	hp_ -= damage;
+	if (hp_ < 0)
+	{
+		hp_ = 0;
+	}
+}
+
+int Player::GetHp(void)
+{
+	return hp_;
 }
 
 
@@ -199,4 +253,152 @@ void Player::Respawn(void)
 
 	// モデルに座標を設定する
 	MV1SetPosition(modelId_, pos_);
+}
+
+void Player::ChangeState(STATE state)
+{
+	state_ = state;
+
+	switch (state)
+	{
+	case Player::STATE::NONE:
+		break;
+	case Player::STATE::STANDBY:
+		ChangeStandby();
+		break;
+	case Player::STATE::KNOCKBACK:
+		ChangeKnockBack();
+		break;
+	case Player::STATE::ATTACK:
+		ChangeAttack();
+		break;
+	case Player::STATE::DEAD:
+		ChangeDead();
+		break;
+	case Player::STATE::END:
+		ChangeEnd();
+		break;
+	case Player::STATE::VICTORY:
+		ChangeVictory();
+		break;
+	}
+}
+
+void Player::ChangeStandby(void)
+{
+}
+
+void Player::ChangeKnockBack(void)
+{
+	// ジャンプ判定にする
+	isJump_ = true;
+
+	// ノックバックカウンタリセット
+	cntKnockBack_ = 0;
+}
+
+void Player::ChangeAttack(void)
+{
+}
+
+void Player::ChangeDead(void)
+{
+}
+
+void Player::ChangeEnd(void)
+{
+}
+
+void Player::ChangeVictory(void)
+{
+}
+
+void Player::UpdateStandby(void)
+{
+	// 移動操作
+	ProcessMove();
+
+	// ジャンプ
+	ProcessJump();
+
+	// 落下位置からリスポーン
+	Respawn();
+
+	// アニメーションの更新
+	animationController_->Update();
+}
+
+void Player::UpdateKnockBack(void)
+{
+	// 着地したら通常状態に戻す
+	if (!isJump_)
+	{
+		ChangeState(STATE::STANDBY);
+		return;
+	}
+	cntKnockBack_++;
+
+	// ジャンプする
+	jumpPow_ -= GRAVITY_POW;
+	pos_.y += jumpPow_;
+
+	// ノックバック方向に移動させる
+	VECTOR movePow = VScale(knockBackDir_, SPEED_KNOCKBACK);
+	pos_ = VAdd(pos_, movePow);
+	MV1SetPosition(modelId_, pos_);
+
+	// リスポーン判定
+	Respawn();
+}
+
+void Player::UpdateAttack(void)
+{
+}
+
+void Player::UpdateDead(void)
+{
+}
+
+void Player::UpdateEnd(void)
+{
+}
+
+void Player::UpdateVictory(void)
+{
+}
+
+void Player::DrawStandby(void)
+{
+	// モデルの描画
+	MV1DrawModel(modelId_);
+}
+
+void Player::DrawKnockBack(void)
+{
+	// モデルの描画
+	MV1DrawModel(modelId_);
+}
+
+void Player::DrawAttack(void)
+{
+	// モデルの描画
+	MV1DrawModel(modelId_);
+}
+
+void Player::DrawDead(void)
+{
+	// モデルの描画
+	MV1DrawModel(modelId_);
+}
+
+void Player::DrawEnd(void)
+{
+	// モデルの描画
+	MV1DrawModel(modelId_);
+}
+
+void Player::DrawVictory(void)
+{
+	// モデルの描画
+	MV1DrawModel(modelId_);
 }

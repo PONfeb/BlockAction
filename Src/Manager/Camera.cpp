@@ -65,16 +65,16 @@ void Camera::SetBeforeDraw(void)
 void Camera::DrawDebug(void)
 {
 #ifdef _DEBUG
-	DrawFormatString(0, 40, 0xffffff,
-		"カメラ座標:(%.2f,%.2f,%.2f)",
-		pos_.x, pos_.y, pos_.z);
-	DrawFormatString(
-		0, 60, 0xffffff,
-		"カメラ角度：(%.2f, %.2f, %.2f)",
-		AsoUtility::Deg2RadF(angles_.x),
-		AsoUtility::Deg2RadF(angles_.y),
-		AsoUtility::Deg2RadF(angles_.z)
-	);
+	//DrawFormatString(0, 40, 0xffffff,
+	//	"カメラ座標:(%.2f,%.2f,%.2f)",
+	//	pos_.x, pos_.y, pos_.z);
+	//DrawFormatString(
+	//	0, 60, 0xffffff,
+	//	"カメラ角度：(%.2f, %.2f, %.2f)",
+	//	AsoUtility::Deg2RadF(angles_.x),
+	//	AsoUtility::Deg2RadF(angles_.y),
+	//	AsoUtility::Deg2RadF(angles_.z)
+	//);
 #endif // DEBUG
 
 	

@@ -7,6 +7,7 @@
 #include "../Object/Shot/ShotBase.h"
 #include "../Object/Enemy/EnemyManager.h"
 #include "../Object/Stage/BlockManager.h"
+#include "../UI/HpManager.h"
 #include <DxLib.h>
 
 GameScene::GameScene(void)
@@ -34,6 +35,10 @@ void GameScene::Init(void)
 	// 敵管理
 	enemyManager_ = new EnemyManager(player_);
 	enemyManager_->Init();
+
+	// HP管理
+	hpManager_ = new HpManager(player_);
+	hpManager_->Init();
 }
 
 void GameScene::Update(void)
@@ -52,6 +57,9 @@ void GameScene::Update(void)
 
 	// 衝突判定
 	Collision();
+
+	// HP管理
+	hpManager_->Update();
 }
 
 void GameScene::Draw(void)
@@ -65,19 +73,19 @@ void GameScene::Draw(void)
 	// 敵
 	enemyManager_->Draw();
 
+	// HP管理
+	hpManager_->Draw();
+
 #ifdef _DEBUG
-
-	// グリッド線
-	grid_->Draw();
-
-	DrawFormatString(0, 20, 0xfffff, "GameScene");
-
-	// 地面との衝突用線分
-	DrawSphere3D(lineTopPos_, 20.0f, 10, 0x00ff00, 0x00ff00, true);
-	DrawSphere3D(lineDownPos_, 20.0f, 10, 0x00ff00, 0x00ff00, true);
-	DrawLine3D(lineTopPos_, lineDownPos_, 0xff0000);
-
-
+	//// グリッド線
+	//grid_->Draw();
+	//
+	//DrawFormatString(0, 20, 0xfffff, "GameScene");
+	//
+	//// 地面との衝突用線分
+	//DrawSphere3D(lineTopPos_, 20.0f, 10, 0x00ff00, 0x00ff00, true);
+	//DrawSphere3D(lineDownPos_, 20.0f, 10, 0x00ff00, 0x00ff00, true);
+	//DrawLine3D(lineTopPos_, lineDownPos_, 0xff0000);
 #endif // DEBUG
 
 }
@@ -99,6 +107,10 @@ void GameScene::Release(void)
 	// 敵
 	enemyManager_->Release();
 	delete enemyManager_;
+
+	// HP管理
+	hpManager_->Release();
+	delete hpManager_;
 }
 
 void GameScene::Collision(void)
@@ -154,7 +166,18 @@ void GameScene::CollisionEnemy(void)
 
 		if (AsoUtility::IsHitSpheres(playerPos, Player::COLLISION_RADIUS, enemyPos, enemyRadius))
 		{
-			int a = 0;
+			// 相手へのベクトルを計算
+			VECTOR diff = VSub(playerPos, enemyPos);
+			diff.y = 0.0f;
+
+			// ベクトルの正規化で単位ベクトルを取得する
+			VECTOR dir = VNorm(diff);
+
+			// プレイヤーをノックバック
+			player_->KnockBack(dir, 20.0f);
+
+			// プレイヤーにダメージ
+			player_->Damage(1);
 		}
 
 		std::vector<ShotBase*> shots = enemy->GetShots();
@@ -170,7 +193,18 @@ void GameScene::CollisionEnemy(void)
 
 			if (AsoUtility::IsHitSpheres(playerPos, Player::COLLISION_RADIUS, shotPos, shotRadius))
 			{
-				int b = 0;
+				// 相手へのベクトルを計算
+				VECTOR diff = VSub(playerPos, shotPos);
+				diff.y = 0.0f;
+
+				// ベクトルの正規化で単位ベクトルを取得する
+				VECTOR dir = VNorm(diff);
+
+				// プレイヤーをノックバック
+				player_->KnockBack(dir, 20.0f);
+
+				// プレイヤーにダメージ
+				player_->Damage(1);
 			}
 		}
 	}

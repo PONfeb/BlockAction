@@ -12,6 +12,8 @@ class Player;
 
 class EnemyManager;
 
+class HpManager;
+
 class GameScene : public SceneBase
 {
 public:
@@ -46,6 +48,9 @@ private:
 
 	// “G
 	EnemyManager* enemyManager_;
+
+	// HPŠÇ—
+	HpManager* hpManager_;
 
 	// ’n–Ê‚ÌÕ“Ë—pü•ª
 	VECTOR lineTopPos_;

@@ -80,6 +80,9 @@ public:
 	// ノックバックスピード
 	static constexpr float SPEED_KNOCKBACK = 10.0f;
 
+	// 最大HP
+	static constexpr int MAX_HP = 5;
+
 	// コンストラクタ
 	Player(void);
 	// デストラクタ
@@ -102,7 +105,16 @@ public:
 	// 指定方向にノックバックさせる
 	void KnockBack(VECTOR dirXZ, float jumpPow);
 
+	// ダメージを与える
+	void Damage(int damage);
+
+	// HPの取得
+	int GetHp(void);
+
 private:
+
+	// 状態
+	STATE state_;
 	
 	// モデルのハンドルID
 	int modelId_;
@@ -116,14 +128,18 @@ private:
 	// ジャンプ判定
 	bool isJump_;
 
+	// HP
+	int hp_;
+
 	// アニメーション制御
 	AnimationController* animationController_;
 
 	// ノックバック方向
 	VECTOR knockBackDir_;
+
 	// ノックバックカウンタ(点滅用)
 	int cntKnockBack_;
-
+	
 	// 行動制御
 	void ProcessMove(void);
 
@@ -131,4 +147,29 @@ private:
 
 	// リスポーン
 	void Respawn(void);
+
+	// 状態遷移
+	void ChangeState(STATE state);
+	void ChangeStandby(void);
+	void ChangeKnockBack(void);
+	void ChangeAttack(void);
+	void ChangeDead(void);
+	void ChangeEnd(void);
+	void ChangeVictory(void);
+
+	// 状態更新
+	void UpdateStandby(void);
+	void UpdateKnockBack(void);
+	void UpdateAttack(void);
+	void UpdateDead(void);
+	void UpdateEnd(void);
+	void UpdateVictory(void);
+
+	// 状態描画
+	void DrawStandby(void);
+	void DrawKnockBack(void);
+	void DrawAttack(void);
+	void DrawDead(void);
+	void DrawEnd(void);
+	void DrawVictory(void);
 };

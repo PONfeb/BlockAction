@@ -54,10 +54,6 @@ void HpManager::Update(void)
 
 void HpManager::Draw(void)
 {
-	float heartSpacing = 80.0f; // ハートの間隔
-	float baseX = 50.0f;        // 描画開始X座標
-	float baseY = 50.0f;        // 描画開始Y座標
-
 	for (int i = 0; i < Player::MAX_HP; ++i)
 	{
 		// イージング値を計算（scaleが1.0→0.0に向かうときにバウンス）
@@ -70,38 +66,13 @@ void HpManager::Draw(void)
 		GetImageSize(imgHeart_, centerX, centerY);
 
 		// ハートの位置
-		float x = baseX + i * heartSpacing;
-		float y = baseY;
+		float x = HEART_POS_X + i * HEART_SPACE;
+		float y = HEART_POS_Y;
 
-		// HPが残っている場合は通常ハート、失った場合はロストハート
 		int img = (hearts_[i].scale > 0.0f) ? imgHeart_ : imgHeartLost_;
 
-		// スケールを適用して描画
 		DrawRotaGraphF(x, y, drawScale, 0.0f, img, true, false);
 	}
-
-	// プレイヤーのＨＰ情報
-	//int max = Player::MAX_HP;
-	//int playerHp = player_->GetHp();
-	//for (int i = 0; i < max; i++)
-	//{
-	//	// プレイヤーのＨＰ残量に応じて、ハート画像を切り替える
-	//	int img = -1;
-	//
-	//	if ((i + 1) > playerHp)
-	//	{
-	//		// 失ったハート
-	//		img = imgHeartLost_;
-	//	}
-	//	else
-	//	{
-	//		// 残っているハート
-	//		img = imgHeart_;
-	//	}
-	//
-	//	DrawRotaGraph(
-	//		START_X + HP_ICON_WIDTH * i, START_Y, 1, 0, 0,  img, true);
-	//}
 }
 
 void HpManager::Release(void)

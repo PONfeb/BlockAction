@@ -23,6 +23,10 @@ public:
 
 	// ＨＰアイコンの描画幅
 	static constexpr int HP_ICON_WIDTH = 100;
+
+	const float HEART_SPACE = 80.0f;	// ハートの間隔
+	const float HEART_POS_Y = 50.0f;    // 描画開始Y座標
+	const float HEART_POS_X = 50.0f;    // 描画開始X座標
 	
 	// コンストラクタ
 	HpManager(Player* player);

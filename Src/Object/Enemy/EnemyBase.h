@@ -43,6 +43,9 @@ public:
 		NONE,
 		STANDBY,
 		ATTACK,
+		HIT_REACT,
+		DEAD_REACT,
+		END
 	};
 
 	// コンストラクタ
@@ -55,8 +58,25 @@ public:
 		int baseModelId, int baseAttackEffectModelId, Player* player);
 
 	void Update(void);
+	void HitRectUpdate(void);
+	void DeathUpdate(void);
+	void EndUpdate(void);
+
 	void Draw(void);
+	void DrawHitReact();
+	void DrawDeathReact();
+	void DrawEnd();
+
 	void Release(void);
+
+	//ダメージを受ける
+	void Damage(int damage);
+
+	//敵の生存判定を取得
+	bool IsAlive(void) const { return isAlive_; }
+
+	//敵の生存判定を設定
+	void SetAlive(bool alive) { isAlive_ = alive; }
 
 	// 状態遷移
 	void ChangeState(STATE state);
@@ -99,6 +119,9 @@ protected:
 	// 移動方向
 	VECTOR moveDir_;
 
+	//一定時間後遷移
+	int stateCnt_ = 0;
+
 	// 移動速度
 	float speed_;
 
@@ -110,6 +133,9 @@ protected:
 
 	// 攻撃間隔カウンタ
 	int cntAttack_;
+
+	//敵の生存判定
+	bool isAlive_ = true;
 
 	// プレイヤーの方向を向く
 	void LookPlayer(void);
@@ -134,6 +160,7 @@ protected:
 	// 状態別描画
 	virtual void DrawStandby(void);
 	virtual void DrawAttack(void);
+
 
 	// 弾の更新
 	void UpdateShot(void);

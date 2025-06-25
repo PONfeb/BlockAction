@@ -77,17 +77,56 @@ void EnemyBase::Update(void)
 	case EnemyBase::STATE::ATTACK:
 		UpdateAttack();
 		break;
+	case EnemyBase::STATE::HIT_REACT:
+		HitRectUpdate();
+		break;
+	case EnemyBase::STATE::DEAD_REACT:
+		DeathUpdate();
+		break;
+	case EnemyBase::STATE::END:
+		EndUpdate(); // 状態維持用。移動などしない。
+		break;
 	}
 
-	// 弾の更新	
 	UpdateShot();
-
-	// アニメーションの更新
 	animationController_->Update();
+}
+
+void EnemyBase::HitRectUpdate(void)
+{
+	stateCnt_++;
+
+	if (stateCnt_ > 20)
+	{
+		if (hp_ > 0)
+		{
+			ChangeState(STATE::STANDBY);
+		}
+		else
+		{
+			ChangeState(STATE::DEAD_REACT);
+		}
+	}
+}
+
+void EnemyBase::DeathUpdate(void)
+{
+	stateCnt_++;
+	if (stateCnt_ > 30 && animationController_->IsEnd())
+	{
+		ChangeState(STATE::END);
+	}
+}
+
+void EnemyBase::EndUpdate(void)
+{
 }
 
 void EnemyBase::Draw(void)
 {
+	// DEAD_REACTやEND状態は描画しない、または透明化などする
+	if (!isAlive_) return;
+
 	switch (state_)
 	{
 	case EnemyBase::STATE::STANDBY:
@@ -96,14 +135,18 @@ void EnemyBase::Draw(void)
 	case EnemyBase::STATE::ATTACK:
 		DrawAttack();
 		break;
+	case EnemyBase::STATE::HIT_REACT:
+		DrawHitReact();
+		break;
+	case EnemyBase::STATE::DEAD_REACT:
+		DrawDeathReact();
+		break;
+	case EnemyBase::STATE::END:
+		DrawEnd();
+		break;
 	}
 
-	// 弾の描画
 	DrawShot();
-
-#ifdef _DEBUG
-	DrawSphere3D(pos_, collisionRadius_, 10, 0x0000ff, 0x0000ff, false);
-#endif // _DEBUG
 }
 
 void EnemyBase::Release(void)
@@ -122,6 +165,24 @@ void EnemyBase::Release(void)
 		delete shot;
 	}
 	shots_.clear();
+}
+
+void EnemyBase::Damage(int damage)
+{
+	if (!isAlive_) return; // すでに死んでいるなら無視
+
+	hp_ -= damage;
+
+	if (hp_ > 0)
+	{
+		ChangeState(STATE::HIT_REACT);
+		isAlive_ = true;
+	}
+	else
+	{
+		ChangeState(STATE::DEAD_REACT);
+		isAlive_ = false;
+	}
 }
 
 void EnemyBase::ChangeState(STATE state)
@@ -268,10 +329,9 @@ void EnemyBase::ChangeAttack(void)
 
 void EnemyBase::UpdateStandby(void)
 {
-	// プレイヤーの方向を向く
-	LookPlayer();
+	if (!isAlive_) return; // 死亡していたら動かない
 
-	// 移動処理
+	LookPlayer();
 	Move();
 }
 
@@ -294,6 +354,18 @@ void EnemyBase::DrawAttack(void)
 {
 	// モデルの描画
 	MV1DrawModel(modelId_);
+}
+
+void EnemyBase::DrawHitReact()
+{
+}
+
+void EnemyBase::DrawDeathReact()
+{
+}
+
+void EnemyBase::DrawEnd()
+{
 }
 
 void EnemyBase::UpdateShot(void)

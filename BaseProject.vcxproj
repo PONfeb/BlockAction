@@ -43,6 +43,9 @@
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
     <ClCompile Include="Src\Scene\TitleScene.cpp" />
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
+    <ClCompile Include="Src\Object\Weapon\WeaponAxe.cpp" />
+    <ClCompile Include="Src\Object\Weapon\WeaponBase.cpp" />
+    <ClCompile Include="Src\Object\Weapon\WeaponPunch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\UI\HpManager.h" />
@@ -69,6 +72,9 @@
     <ClInclude Include="Src\Scene\SceneBase.h" />
     <ClInclude Include="Src\Scene\TitleScene.h" />
     <ClInclude Include="Src\Utility\AsoUtility.h" />
+    <ClInclude Include="Src\Object\Weapon\WeaponAxe.h" />
+    <ClInclude Include="Src\Object\Weapon\WeaponBase.h" />
+    <ClInclude Include="Src\Object\Weapon\WeaponPunch.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

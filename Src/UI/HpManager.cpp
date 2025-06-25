@@ -1,9 +1,10 @@
 
-#include <string>
-#include <DxLib.h>
 #include "../Application.h"
 #include "../Object/Player.h"
 #include "HpManager.h"
+#include <string>
+#include <DxLib.h>
+#include <functional>
 
 HpManager::HpManager(Player* player)
 {
@@ -16,41 +17,91 @@ HpManager::~HpManager(void)
 void HpManager::Init(void)
 {
 	std::string path;
+
 	// ２Ｄ画像のロード
 	path = Application::PATH_IMAGE + "Heart.png";
 	imgHeart_ = LoadGraph(path.c_str());
 	path = Application::PATH_IMAGE + "HeartLost.png";
 	imgHeartLost_ = LoadGraph(path.c_str());
+
+	//画像スケール初期化
+	for (int i = 0; i < Player::MAX_HP; ++i)
+	{
+		hearts_[i].scale = 1.0f;
+	}
+}
+
+void HpManager::StartAnim()
+{
 }
 
 void HpManager::Update(void)
 {
+	int hp = player_->GetHp();
+
+	for (int i = 0; i < Player::MAX_HP; ++i)
+	{
+		if (i >= hp && hearts_[i].scale > 0.0f)
+		{
+			hearts_[i].scale -= 0.05f;
+			if (hearts_[i].scale < 0.0f)
+			{
+				hearts_[i].scale = 0.0f;
+			}
+		}
+	}
 }
 
 void HpManager::Draw(void)
 {
-	// プレイヤーのＨＰ情報
-	int max = Player::MAX_HP;
-	int playerHp = player_->GetHp();
-	for (int i = 0; i < max; i++)
+	float heartSpacing = 80.0f; // ハートの間隔
+	float baseX = 50.0f;        // 描画開始X座標
+	float baseY = 50.0f;        // 描画開始Y座標
+
+	for (int i = 0; i < Player::MAX_HP; ++i)
 	{
-		// プレイヤーのＨＰ残量に応じて、ハート画像を切り替える
-		int img = -1;
+		// イージング値を計算（scaleが1.0→0.0に向かうときにバウンス）
+		float t = 1.0f - hearts_[i].scale; // 0→1
+		float eased = easeOutBounce(t);
+		float drawScale = 1.0f - eased;    // 1→0
 
-		if ((i + 1) > playerHp)
-		{
-			// 失ったハート
-			img = imgHeartLost_;
-		}
-		else
-		{
-			// 残っているハート
-			img = imgHeart_;
-		}
+		// ハート画像の中心座標取得
+		float centerX, centerY;
+		GetImageSize(imgHeart_, centerX, centerY);
 
-		DrawRotaGraph(
-			START_X + HP_ICON_WIDTH * i, START_Y, 1, 0, 0,  img, true);
+		// ハートの位置
+		float x = baseX + i * heartSpacing;
+		float y = baseY;
+
+		// HPが残っている場合は通常ハート、失った場合はロストハート
+		int img = (hearts_[i].scale > 0.0f) ? imgHeart_ : imgHeartLost_;
+
+		// スケールを適用して描画
+		DrawRotaGraphF(x, y, drawScale, 0.0f, img, true, false);
 	}
+
+	// プレイヤーのＨＰ情報
+	//int max = Player::MAX_HP;
+	//int playerHp = player_->GetHp();
+	//for (int i = 0; i < max; i++)
+	//{
+	//	// プレイヤーのＨＰ残量に応じて、ハート画像を切り替える
+	//	int img = -1;
+	//
+	//	if ((i + 1) > playerHp)
+	//	{
+	//		// 失ったハート
+	//		img = imgHeartLost_;
+	//	}
+	//	else
+	//	{
+	//		// 残っているハート
+	//		img = imgHeart_;
+	//	}
+	//
+	//	DrawRotaGraph(
+	//		START_X + HP_ICON_WIDTH * i, START_Y, 1, 0, 0,  img, true);
+	//}
 }
 
 void HpManager::Release(void)
@@ -58,4 +109,34 @@ void HpManager::Release(void)
 	// ２Ｄ画像のメモリ解放
 	DeleteGraph(imgHeart_);
 	DeleteGraph(imgHeartLost_);
+}
+
+void HpManager::GetImageSize(int img, float& centerX, float& centerY)
+{
+	int width = 0, height = 0;
+	GetGraphSize(img, &width, &height);
+	centerX = width / 2.0f;
+	centerY = height / 2.0f;
+}
+
+float HpManager::easeOutBounce(float x)
+{
+	const float n1 = 7.5625f;
+	const float d1 = 2.75f;
+
+	if (x < 1.0f / d1) {
+		return n1 * x * x;
+	}
+	else if (x < 2.0f / d1) {
+		x -= 1.5f / d1;
+		return n1 * x * x + 0.75f;
+	}
+	else if (x < 2.5f / d1) {
+		x -= 2.25f / d1;
+		return n1 * x * x + 0.9375f;
+	}
+	else {
+		x -= 2.625f / d1;
+		return n1 * x * x + 0.984375f;
+	}
 }

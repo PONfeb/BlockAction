@@ -84,13 +84,16 @@ private:
 	void CollisionEnemy(void);
 
 
-	//ゲームオーバー画像ハンドル
+	// ゲームオーバー画像
 	int imgGameOver_ = -1;
+	// ゲームクリア画像
+	int imgGameClear_ = -1;
+
+	int backGroundImg_;
 
 	//ゲームクリア判定
 	bool isGameClear_ = false;
-	//画像ハンドル
-	int imgGameClear_ = -1;
+
 
 
 };

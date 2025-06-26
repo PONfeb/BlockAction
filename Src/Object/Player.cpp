@@ -421,7 +421,8 @@ void Player::Respawn(void)
 void Player::KnockBack(VECTOR dirXZ, float jumpPow)
 {
 	//引数をメンバ変数に格納
-	knockBackDir_ = dirXZ;
+	knockBackDir_.x = -dirXZ.x;
+	knockBackDir_.z = -dirXZ.z;
 	jumpPow_ = jumpPow;
 
 	//ノックバックに状態遷移

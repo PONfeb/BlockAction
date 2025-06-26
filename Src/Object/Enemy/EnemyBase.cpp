@@ -81,10 +81,10 @@ void EnemyBase::Update(void)
 		HitRectUpdate();
 		break;
 	case EnemyBase::STATE::DEAD_REACT:
-		DeathUpdate();
+		UpdateDead();
 		break;
 	case EnemyBase::STATE::END:
-		EndUpdate(); // 状態維持用。移動などしない。
+		UpdateEnd(); // 状態維持用。移動などしない。
 		break;
 	}
 
@@ -109,40 +109,38 @@ void EnemyBase::HitRectUpdate(void)
 	}
 }
 
-void EnemyBase::DeathUpdate(void)
+void EnemyBase::UpdateDead(void)
 {
 	stateCnt_++;
+
+	// アニメーション再生が終わってからENDへ
 	if (stateCnt_ > 30 && animationController_->IsEnd())
 	{
 		ChangeState(STATE::END);
 	}
 }
 
-void EnemyBase::EndUpdate(void)
+void EnemyBase::UpdateEnd(void)
 {
 }
 
 void EnemyBase::Draw(void)
 {
-	// DEAD_REACTやEND状態は描画しない、または透明化などする
-	if (!isAlive_) return;
+	if (state_ == STATE::END) return;
 
 	switch (state_)
 	{
-	case EnemyBase::STATE::STANDBY:
-		DrawStandby();
+	case STATE::STANDBY:
+		DrawStandby(); 
 		break;
-	case EnemyBase::STATE::ATTACK:
-		DrawAttack();
+	case STATE::ATTACK:
+		DrawAttack(); 
 		break;
-	case EnemyBase::STATE::HIT_REACT:
-		DrawHitReact();
+	case STATE::HIT_REACT:
+		DrawHitReact(); 
 		break;
-	case EnemyBase::STATE::DEAD_REACT:
-		DrawDeathReact();
-		break;
-	case EnemyBase::STATE::END:
-		DrawEnd();
+	case STATE::DEAD_REACT:
+		DrawDead(); 
 		break;
 	}
 
@@ -196,6 +194,15 @@ void EnemyBase::ChangeState(STATE state)
 		break;
 	case EnemyBase::STATE::ATTACK:
 		ChangeAttack();
+		break;
+	case EnemyBase::STATE::DEAD_REACT:
+		ChangeDead();
+		break;
+	case EnemyBase::STATE::HIT_REACT:
+		// 点滅などの反応は既に再生済みなら省略可能
+		break;
+	case EnemyBase::STATE::END:
+		// 何もしないでOK
 		break;
 	}
 }
@@ -327,6 +334,15 @@ void EnemyBase::ChangeAttack(void)
 
 }
 
+void EnemyBase::ChangeDead(void)
+{
+	// 死亡アニメーションを再生（ループなし）
+	animationController_->Play(static_cast<int>(ANIM_TYPE::DEATH), false);
+
+	// カウンター初期化
+	stateCnt_ = 0;
+}
+
 void EnemyBase::UpdateStandby(void)
 {
 	if (!isAlive_) return; // 死亡していたら動かない
@@ -358,10 +374,28 @@ void EnemyBase::DrawAttack(void)
 
 void EnemyBase::DrawHitReact()
 {
+	//フレーム数(cntKnockBack_で計測)で色を切り替える
+	if ((stateCnt_ / TERM_BLINK) % 2 == 0)
+	{
+		//点滅
+		MV1SetMaterialEmiColor(modelId_, 0, COLOR_DIF_BLINK);
+	}
+	else
+	{
+		//通常
+		MV1SetMaterialEmiColor(modelId_, 0, COLOR_DIF_DEFAULT);
+	}
+
+	//モデルの描画
+	MV1DrawModel(modelId_);
+
+	//位置の設定
+	MV1SetPosition(modelId_, pos_);
 }
 
-void EnemyBase::DrawDeathReact()
+void EnemyBase::DrawDead()
 {
+	MV1DrawModel(modelId_);
 }
 
 void EnemyBase::DrawEnd()

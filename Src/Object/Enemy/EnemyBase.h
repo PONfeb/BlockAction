@@ -15,6 +15,15 @@ public:
 	// 標準の自己発光色
 	static constexpr COLOR_F COLOR_EMI_DEFAULT = { 0.6f, 0.6f, 0.6f, 1.0f };
 
+	// 標準の拡散光色
+	static constexpr COLOR_F COLOR_DIF_DEFAULT = { 0.4f, 0.4f, 0.4f, 1.0f };
+	
+	// 点滅時の拡散光色
+	static constexpr COLOR_F COLOR_DIF_BLINK = { 1.0f, 0.2f, 0.2f, 1.0f };
+	
+	// 点滅間隔
+	static constexpr int TERM_BLINK = 8;
+
 	// エネミー種別
 	enum class TYPE
 	{
@@ -59,12 +68,12 @@ public:
 
 	void Update(void);
 	void HitRectUpdate(void);
-	void DeathUpdate(void);
-	void EndUpdate(void);
+	void UpdateDead(void);
+	void UpdateEnd(void);
 
 	void Draw(void);
 	void DrawHitReact();
-	void DrawDeathReact();
+	void DrawDead();
 	void DrawEnd();
 
 	void Release(void);
@@ -152,6 +161,7 @@ protected:
 	// 状態遷移
 	virtual void ChangeStandby(void);
 	virtual void ChangeAttack(void);
+	virtual void ChangeDead(void);
 
 	// 状態別更新
 	virtual void UpdateStandby(void);

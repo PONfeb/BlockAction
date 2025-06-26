@@ -50,6 +50,9 @@ void GameScene::Init(void)
 	hpManager_ = new HpManager(player_);
 	hpManager_->Init();
 
+	// ”wŒi‰æ‘œ
+	backGroundImg_ = LoadGraph((Application::PATH_IMAGE + "Background.png").c_str());
+
 	//ƒQ[ƒ€ƒI[ƒo[‰æ‘œ‚Ì“Ç‚Ýž‚Ý
 	imgGameOver_ = LoadGraph("Data/Image/Gameover.png");
 	//ƒQ[ƒ€ƒNƒŠƒA‰æ‘œ‚Ì“Ç‚Ýž‚Ý
@@ -102,7 +105,9 @@ void GameScene::Update(void)
 
 void GameScene::Draw(void)
 {
-
+	// ”wŒi‰æ‘œ‚Ì•`‰æ
+	DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, 1.0, 0, backGroundImg_, true);
+	
 	//ƒuƒƒbƒNƒ}ƒl[ƒWƒƒ[
 	blockManager_->Draw();
 
@@ -115,7 +120,7 @@ void GameScene::Draw(void)
 	enemyManager_->Draw();
 
 	//HP•`‰æ
-	hpManager_->Draw();ssd
+	hpManager_->Draw();
 
 	//ƒQ[ƒ€ƒI[ƒo[•`‰æ
 	bool gameOverFlag = player_->IsGameOver();

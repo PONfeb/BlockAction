@@ -10,7 +10,7 @@ EnemyDemon::~EnemyDemon(void)
 
 void EnemyDemon::SetParam(void)
 {
-	hp_ = 2;
+	hp_ = 1;
 	isAlive_ = true;
 	scales_ = { 0.7f, 0.7f, 0.7f };
 	speed_ = 5.0f;
